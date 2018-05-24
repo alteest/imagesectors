@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class DisplayImage extends JFrame {
     
     public DisplayImage() {
