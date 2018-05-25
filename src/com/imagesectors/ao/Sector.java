@@ -9,7 +9,7 @@ public class Sector {
 	private int h2;
 	private String label;
 	
-	Sector(String name, int w1, int h1, int w2, int h2, String label) {
+	public Sector(String name, int w1, int h1, int w2, int h2, String label) {
 		this.setName(name);
 		this.setPos1(w1, h1);
 		this.setPos2(w2, h2);
