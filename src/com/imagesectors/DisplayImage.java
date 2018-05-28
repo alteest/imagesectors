@@ -1,34 +1,31 @@
 package com.imagesectors;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.imagesectors.ao.LabelList;
 import com.imagesectors.ao.SectorList;
+import com.imagesectors.component.ColorRenderer;
 import com.imagesectors.component.ImageLabel;
 import com.imagesectors.component.SectorsTableListSelectionListener;
 
 @SuppressWarnings("serial")
 public class DisplayImage extends JFrame {
-    
-	private Object[][] data; 
-	private String[] columnNames = {"Name","W1","H1","W2","H2","Label"}; 
-	private DefaultTableModel tableModel; 
-	private JTable table; 
-	private SectorList sectors;
+
+	private static SectorList sectors = new SectorList();
+	private static LabelList labels = new LabelList();
+
+	//private DefaultTableModel tableModel; 
+	private JTable labelsTable; 
+	private JTable sectorsTable; 
 	private ImageLabel imageLabel;
 
 	public DisplayImage() {
@@ -45,38 +42,78 @@ public class DisplayImage extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-
+    
     private void createLayout() {
     	setLayout(new FlowLayout());
     	
-        sectors = new SectorList();
         sectors.readFromCSV("src/data.csv");
-        data = sectors.convert2Data();
-        tableModel = new DefaultTableModel(data, columnNames);
+        labels.readFromCSV("src/labels.csv");
 
         imageLabel = new ImageLabel(null);
 
-        table = new JTable(tableModel);
-        table.getColumnModel().getColumn(0).setPreferredWidth(240);
-        table.getColumnModel().getColumn(1).setPreferredWidth(40);
-        table.getColumnModel().getColumn(2).setPreferredWidth(40);
-        table.getColumnModel().getColumn(3).setPreferredWidth(40);
-        table.getColumnModel().getColumn(4).setPreferredWidth(40);
-        table.getColumnModel().getColumn(5).setPreferredWidth(100);
-        table.setAutoCreateRowSorter(true);
-        table.getSelectionModel().addListSelectionListener(new SectorsTableListSelectionListener(table, imageLabel));
+        initSectorTable();
+        initLabelTable();
         
-        JScrollPane scrollPane = new JScrollPane(table); 
-        scrollPane.setPreferredSize(new Dimension(500, 800)); 
-        JPanel outerPanel = new JPanel(new BorderLayout());
+        JScrollPane sectorsScrollPane = new JScrollPane(sectorsTable); 
+        sectorsScrollPane.setPreferredSize(new Dimension(500, 600)); 
+
+        JScrollPane labelsScrollPane = new JScrollPane(labelsTable); 
+        labelsScrollPane.setPreferredSize(new Dimension(500, 200)); 
+
+        JPanel tablePanel = new JPanel(new BorderLayout()); 
+        tablePanel.add(sectorsScrollPane, BorderLayout.NORTH);
+        tablePanel.add(labelsScrollPane, BorderLayout.SOUTH);
+        
         JPanel panel = new JPanel(new BorderLayout()); 
-        panel.add(scrollPane, BorderLayout.WEST);
-        
+        panel.add(tablePanel, BorderLayout.WEST);
         panel.add(imageLabel, BorderLayout.CENTER);
 
+        JPanel outerPanel = new JPanel(new BorderLayout());
         outerPanel.add(panel, BorderLayout.BEFORE_FIRST_LINE);
         
         add(outerPanel);
+    }
+    
+    private void initSectorTable() {
+        Object[][] data = sectors.convert2Data();
+    	String[] columnNames = {"Name","W1","H1","W2","H2","Label"}; 
+    	DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
+
+        sectorsTable = new JTable(tableModel);
+        sectorsTable.getColumnModel().getColumn(0).setPreferredWidth(240);
+        sectorsTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+        sectorsTable.getColumnModel().getColumn(2).setPreferredWidth(40);
+        sectorsTable.getColumnModel().getColumn(3).setPreferredWidth(40);
+        sectorsTable.getColumnModel().getColumn(4).setPreferredWidth(40);
+        sectorsTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+        sectorsTable.setAutoCreateRowSorter(true);
+        sectorsTable.getSelectionModel().addListSelectionListener(new SectorsTableListSelectionListener(sectorsTable, imageLabel));
+    }
+
+    private void initLabelTable() {
+        Object[][] data = labels.convert2Data();
+    	String[] columnNames = {"Label", "Index", "Color"}; 
+    	DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
+
+        labelsTable = new JTable(tableModel) {
+            public boolean isCellEditable(int row, int column) {                
+                return false;
+            }
+        };
+        labelsTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+        labelsTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+        labelsTable.getColumnModel().getColumn(2).setPreferredWidth(260);
+        labelsTable.setAutoCreateRowSorter(true);
+        
+        labelsTable.getColumn("Color").setCellRenderer(new ColorRenderer());
+    }
+
+    public static LabelList getLabels() {
+    	return labels;
+    }
+
+    public static SectorList getSectors() {
+    	return sectors;
     }
 
     public static void main(String[] args) {

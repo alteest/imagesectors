@@ -1,5 +1,6 @@
 package com.imagesectors.component;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import com.imagesectors.DisplayImage;
+import com.imagesectors.ao.Label;
 import com.imagesectors.ao.Sector;
 
 @SuppressWarnings("serial")
@@ -39,9 +42,9 @@ public class ImageLabel extends JLabel {
 
 	public void setData(Object[] data) {
 		sectors.clear();
-		sectors.add(new Sector(String.valueOf(data[0]), (int) data[1], (int) data[2],
-				(int) data[3], (int) data[4], String.valueOf(data[5])));
-		setFilename(String.valueOf(data[0]));
+		String filename = String.valueOf(data[0]);
+		sectors.addAll(DisplayImage.getSectors().getSectorsByName(filename));
+		setFilename(filename);
 	}
 	
     private ImageIcon loadImage() {
@@ -77,12 +80,19 @@ public class ImageLabel extends JLabel {
     	graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
     			RenderingHints.VALUE_INTERPOLATION_BILINEAR);
     	graphics2D.drawImage(image, 0, 0, newWidth, newHeight, null);
-    	
-    	graphics2D.setColor(Color.RED);
+
+    	graphics2D.setStroke(new BasicStroke(3F));    	
     	for (Sector sector : sectors) {
-    		graphics2D.drawRect((int) (sector.getH1() * ratio), (int) (sector.getW1() * ratio),
-    				(int) ((sector.getH2() - sector.getH1()) * ratio),
-    				(int) ((sector.getW2() - sector.getW1()) * ratio));
+    		Label label = DisplayImage.getLabels().getLabelByName(sector.getLabel());
+    		Color color = Color.RED;
+    		if (label != null) {
+    			System.out.println("Use color :" + label.getColor().toString());
+    			color = label.getColor();
+    		}
+        	graphics2D.setColor(color);
+    		graphics2D.drawRect((int) (sector.getW1() * ratio), (int) (sector.getH1() * ratio),
+    				(int) ((sector.getW2() - sector.getW1()) * ratio),
+    				(int) ((sector.getH2() - sector.getH1()) * ratio));
     	}
     	graphics2D.dispose();    	
     	

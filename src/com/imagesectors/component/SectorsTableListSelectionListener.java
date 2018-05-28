@@ -18,16 +18,15 @@ public class SectorsTableListSelectionListener implements ListSelectionListener 
 	public void valueChanged(ListSelectionEvent event) {
 		if (event.getValueIsAdjusting()) {
 
-			String selectedData = null;
+			//String selectedData = null;
 			Object[] rowValues = new Object[table.getColumnCount()];
 
 			int row = table.getSelectedRow();
 			for (int j = 0; j < table.getColumnCount(); j++) {
-				selectedData = String.valueOf(table.getValueAt(row, j));
-				System.out.println("Selected: " + selectedData);
+				//selectedData = String.valueOf(table.getValueAt(row, j));
+				//System.out.println("Selected: " + selectedData);
 				rowValues[j] = table.getValueAt(row, j);
 			}
-
 			imageLabel.setData(rowValues);
 			
 			/*int[] selectedRow = table.getSelectedRows();

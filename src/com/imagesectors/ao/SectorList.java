@@ -15,6 +15,16 @@ public class SectorList {
 		this.sectors = new ArrayList<Sector>();
 	}
 	
+	public ArrayList<Sector> getSectorsByName(String name) {
+		ArrayList<Sector> s = new ArrayList<Sector>();
+		for (Sector sector: sectors) {
+			if (name.equals(sector.getName())) {
+				s.add(sector);
+			}
+		}
+		return s;
+	}
+	
 	public void readFromCSV(String filename) {
 		File file = new File(filename);
 		FileReader reader = null;
