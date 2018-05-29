@@ -50,8 +50,7 @@ public class ImageLabel extends JLabel {
     private ImageIcon loadImage() {
         if (filename != null) {
         	Path filePath = Paths.get("src", "images", filename);
-        	ImageIcon ii = new ImageIcon(filePath.toString());
-        	return ii;
+        	return new ImageIcon(filePath.toString());
         }
         return null;
     }

@@ -43,8 +43,7 @@ public class LabelList {
 				line = infile.readLine();
 				if (line == null) {
 					done = true;
-				}
-				else {
+				} else {
 	               String[] tokens = line.trim().split(",");
 	               String name = tokens[0].trim();
 	               int id = Integer.parseInt(tokens[1].trim());
